@@ -14,13 +14,15 @@ import dev.zprestige.mud.shader.impl.BufferGroup;
 import dev.zprestige.mud.shader.impl.GlowShader;
 import dev.zprestige.mud.util.impl.*;
 import net.minecraft.block.Blocks;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.init.Blocks;
 import net.minecraft.network.play.client.CPacketPlayerTryUseItemOnBlock;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3i;
 
 import java.awt.*;
@@ -60,16 +62,16 @@ public class AutoAnchor extends Module {
         }
         new ArrayList<>(anchors).stream().filter(pos -> mc.world.getBlockState(pos).getBlock().equals(Blocks.AIR) || BlockUtil.distance(pos) > range.getValue()).forEach(anchors::remove);
         new ArrayList<>(glowStoned).stream().filter(pos -> mc.world.getBlockState(pos).getBlock().equals(Blocks.AIR) || BlockUtil.distance(pos) > range.getValue()).forEach(glowStoned::remove);
-        Player entityPlayer = EntityUtil.getEntityPlayer(range.getValue());
-        if (entityPlayer == null || EntityUtil.isMoving()) {
+        PlayerEntity PlayerEntity = EntityUtil.getEntityPlayer(range.getValue());
+        if (PlayerEntity == null || EntityUtil.isMoving()) {
             return;
         }
         boolean allow = System.currentTimeMillis() - time > timing.getValue();
-        BlockPos pos = BlockUtil.getPosition(entityPlayer).up().up();
+        BlockPos pos = BlockUtil.getPosition(PlayerEntity).up().up();
         boolean canPlace = false;
         for (Vec3i vec3i : offsets) {
             BlockPos vec = pos.add(vec3i);
-            if (!mc.world.getBlockState(vec).getMaterial().isReplaceable()) {
+            if (!mc.world.getBlockState(vec).isReplaceable()) {
                 canPlace = true;
             }
         }
@@ -93,7 +95,7 @@ public class AutoAnchor extends Module {
                 }
                 int currentItem = mc.player.inventory.currentItem;
                 InventoryUtil.switchToSlot(slot);
-                PacketUtil.invoke(new CPacketPlayerTryUseItemOnBlock(pos, EnumFacing.DOWN, EnumHand.MAIN_HAND, 0.5f, 0.5f, 0.5f));
+                PacketUtil.invoke(new CPacketPlayerTryUseItemOnBlock(pos, Direction.DOWN, Hand.MAIN_HAND, 0.5f, 0.5f, 0.5f));
                 InventoryUtil.switchBack(currentItem);
                 glowStoned.add(pos);
                 if (!instant.getValue()) {
@@ -102,7 +104,7 @@ public class AutoAnchor extends Module {
                 }
             }
             if (allow) {
-                PacketUtil.invoke(new CPacketPlayerTryUseItemOnBlock(pos, EnumFacing.DOWN, EnumHand.MAIN_HAND, 0.5f, 0.5f, 0.5f));
+                PacketUtil.invoke(new CPacketPlayerTryUseItemOnBlock(pos, Direction.DOWN, Hand.MAIN_HAND, 0.5f, 0.5f, 0.5f));
                 if (!instant.getValue()) {
                     time = System.currentTimeMillis();
                 }
@@ -112,7 +114,7 @@ public class AutoAnchor extends Module {
             BlockPos pos1 = pos.down();
             for (Vec3i vec3i : offsets) {
                 BlockPos vec = pos1.add(vec3i);
-                if (!mc.world.getBlockState(vec).getMaterial().isReplaceable()) {
+                if (!mc.world.getBlockState(vec).isReplaceable()) {
                     placeable = vec.up();
                 }
             }
@@ -128,7 +130,7 @@ public class AutoAnchor extends Module {
                 pos1 = pos1.down();
                 for (Vec3i vec3i : offsets) {
                     BlockPos vec = pos1.add(vec3i);
-                    if (!mc.world.getBlockState(vec).getMaterial().isReplaceable()) {
+                    if (!mc.world.getBlockState(vec).isReplaceable()) {
                         placeable = vec.up();
                     }
                 }

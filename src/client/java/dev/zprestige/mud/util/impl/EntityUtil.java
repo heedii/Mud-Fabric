@@ -3,8 +3,9 @@ package dev.zprestige.mud.util.impl;
 import dev.zprestige.mud.Mud;
 import dev.zprestige.mud.util.MC;
 import net.minecraft.client.entity.EntityOtherPlayerMP;
+import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.settings.KeyBinding;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.potion.Potion;
 import net.minecraft.util.math.Vec3d;
 
@@ -13,15 +14,15 @@ import java.util.Objects;
 
 public class EntityUtil implements MC {
     private static final KeyBinding[] movementKeys = new KeyBinding[] {
-            mc.gameSettings.keyBindForward,
-            mc.gameSettings.keyBindRight,
-            mc.gameSettings.keyBindBack,
-            mc.gameSettings.keyBindLeft,
-            mc.gameSettings.keyBindJump,
-            mc.gameSettings.keyBindSprint
+            mc.options.forwardKey,
+            mc.options.rightKey,
+            mc.options.backKey,
+            mc.options.leftKey,
+            mc.options.jumpKey,
+            mc.options.sprintKey
     };
 
-    public static EntityOtherPlayerMP setupEntity(EntityPlayer entityPlayer, Vec3d vec) {
+    public static EntityOtherPlayerMP setupEntity(PlayerEntity entityPlayer, Vec3d vec) {
         EntityOtherPlayerMP entityOtherPlayerMP1 = new EntityOtherPlayerMP(mc.world, entityPlayer.getGameProfile());
         entityOtherPlayerMP1.copyLocationAndAnglesFrom(entityPlayer);
         entityOtherPlayerMP1.rotationYawHead = entityPlayer.rotationYawHead;
@@ -39,7 +40,7 @@ public class EntityUtil implements MC {
 
 
     public static boolean isMoving(){
-        return Arrays.stream(getMovementKeys()).anyMatch(KeyBinding::isKeyDown);
+        return Arrays.stream(getMovementKeys()).anyMatch(KeyBinding::isPressed);
     }
 
     public static KeyBinding[] getMovementKeys() {
@@ -88,23 +89,23 @@ public class EntityUtil implements MC {
 
 
 
-    public static EntityPlayer getEntityPlayer(float range) {
-        EntityPlayer lowest = null;
-        for (EntityPlayer entityPlayer : mc.world.playerEntities) {
-            if (entityPlayer.equals(mc.player)) {
+    public static PlayerEntity getEntityPlayer(float range) {
+        PlayerEntity lowest = null;
+        for (PlayerEntity PlayerEntity : mc.world.playerEntities) {
+            if (PlayerEntity.equals(mc.player)) {
                 continue;
             }
-            if (entityPlayer.isDead || entityPlayer.getHealth() <= 0.0f) {
+            if (PlayerEntity.isDead || PlayerEntity.getHealth() <= 0.0f) {
                 continue;
             }
-            if (mc.player.getDistance(entityPlayer) > range) {
+            if (mc.player.getDistance(PlayerEntity) > range) {
                 continue;
             }
-            if (Mud.friendManager.contains(entityPlayer)) {
+            if (Mud.friendManager.contains(PlayerEntity)) {
                 continue;
             }
-            if (lowest == null || mc.player.getDistance(entityPlayer) < mc.player.getDistance(lowest)) {
-                lowest = entityPlayer;
+            if (lowest == null || mc.player.getDistance(PlayerEntity) < mc.player.getDistance(lowest)) {
+                lowest = PlayerEntity;
             }
         }
         return lowest;

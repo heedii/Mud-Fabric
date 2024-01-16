@@ -1,14 +1,14 @@
 package dev.zprestige.mud.events.impl.player;
 
 import dev.zprestige.mud.events.bus.Event;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 
 public class BreakBlockEvent extends Event {
     private final BlockPos pos;
-    private final EnumFacing enumFacing;
+    private final Direction enumFacing;
 
-    public BreakBlockEvent(BlockPos pos, EnumFacing enumFacing) {
+    public BreakBlockEvent(BlockPos pos, Direction enumFacing) {
         this.pos = pos;
         this.enumFacing = enumFacing;
     }
@@ -17,7 +17,7 @@ public class BreakBlockEvent extends Event {
         return pos;
     }
 
-    public EnumFacing getEnumFacing() {
+    public Direction getEnumFacing() {
         return enumFacing;
     }
 }

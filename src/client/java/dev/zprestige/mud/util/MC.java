@@ -1,8 +1,8 @@
 package dev.zprestige.mud.util;
 
 import dev.zprestige.mud.Mud;
-import net.minecraft.client.Minecraft;
+import net.minecraft.client.MinecraftClient;
 
 public interface MC {
-    Minecraft mc = Mud.mc;
+    MinecraftClient mc = MinecraftClient.getInstance();
 }
